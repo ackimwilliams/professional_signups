@@ -1,5 +1,135 @@
+## Overview
+
+The project manager wants to unify professional signups that happen through disparate sources (direct, partner referrals, internal additions) and this project seeks to create endpoints that can facilitate their objective.  
+
+Endpoints exposed by this project are as follows:
+
+```
+BASE API URL: http://localhost:8000/api
+```
+
+## List Professionals
+#### List all professionals, filtered by source with the option to include resume
+
+GET /api/professionals/?source=direct|partner|internal&include_resume=true
+
+Optional query params:
+
+ - source=direct|partner|internal
+ - include_resume=true
+
+##### Example Response
+```json
+[
+  {
+    "id": 1,
+    "full_name": "Jane Doe",
+    "email": "jane@example.com",
+    "phone": "15551234567",
+    "company_name": "Acme Inc",
+    "job_title": "Research Analyst",
+    "source": "direct",
+    "created_at": "2026-02-16T12:30:10Z",
+    "resume_url": "http://localhost:9000/resumes/jane.pdf",
+    "resume_summary": "Experienced research analyst with 5+ years in financial modeling..."
+  }
+]
+```
+
+## Create Professional
+#### Create a single professional
+
+POST /api/professionals/
+
+##### Example Payload
+```json
+{
+  "full_name": "Jane Doe",
+  "email": "jane@example.com",
+  "phone": "15551234567",
+  "company_name": "Acme Inc",
+  "job_title": "Research Analyst",
+  "source": "direct"
+}
+```
+
+##### Example Response
+```json
+{
+  "id": 1,
+  "full_name": "Jane Doe",
+  "email": "jane@example.com",
+  "phone": "15551234567",
+  "company_name": "Acme Inc",
+  "job_title": "Research Analyst",
+  "source": "direct",
+  "created_at": "2026-02-16T12:30:10Z",
+  "resume_url": null,
+  "resume_summary": null
+}
+```
 
 
+## Bulk Upsert Professionals
+#### Create bulk professionals
+
+POST /api/professionals/
+
+- Uses email as primary key if present 
+- Otherwise uses phone 
+- Supports partial success
+
+##### Example Payload
+```json
+[
+  {
+    "full_name": "Jane Doe",
+    "email": "jane@example.com",
+    "source": "direct"
+  },
+  {
+    "full_name": "John Smith",
+    "phone": "15550001111",
+    "source": "partner"
+  }
+]
+```
+
+##### Example Response
+```json
+{
+  "created": 1,
+  "updated": 1,
+  "errors": []
+}
+```
+
+
+## Upload Resume
+#### Upload resume of professional
+
+POST /api/professionals/{professional_id}/resume
+
+- Uses email as primary key if present
+- Otherwise uses phone
+- Supports partial success
+
+##### Example Request
+```bash
+curl -X POST http://localhost:8000/api/professionals/1/resume \
+-F "file=@sample_resume.pdf"
+```
+
+##### Example Response (201)
+```json
+{
+  "id": 10,
+  "professional": 1,
+  "file_url": "http://localhost:9000/resumes/resume_1.pdf",
+  "summary": "Senior researcher with 10 years experience in market intelligence..."
+}
+```
+---
 
 ## Running application:
 
@@ -44,7 +174,7 @@ python manage.py test api
 
 
 
-### Future changes:
+### In the interest of time certain tradeoff were made, given more time the following updates will be addressed:
 
 1. add user profiles and authentication support
 2. create custom exception for this domain
@@ -66,8 +196,10 @@ python manage.py test api
 
 #### Login
 
+```
 email address = test@test.com
 password = test
+```
 
 <img width="933" height="720" alt="image" src="https://github.com/user-attachments/assets/ef8a0b10-8ebb-4815-af0a-818062f03310" />
 
@@ -94,7 +226,7 @@ password = test
 
 
 
-### Future Changes
+### In the interest of time certain tradeoff were made, given more time the following updates will be addressed:
 
 1. add user profiles and authentication
 2. add support for multiple file types, not just pdf
