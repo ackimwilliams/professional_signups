@@ -164,8 +164,8 @@ export function ProfessionalsBulk() {
                                                     sx={fieldSx}
                                                     onChange={(e) =>
                                                         setRows((prev) =>
-                                                            prev.map((r, i) =>
-                                                                i === index ? { ...r, full_name: e.target.value } : r,
+                                                            prev.map((draft, i) =>
+                                                                i === index ? { ...draft, full_name: e.target.value } : draft,
                                                             ),
                                                         )
                                                     }
@@ -177,8 +177,8 @@ export function ProfessionalsBulk() {
                                                     sx={fieldSx}
                                                     onChange={(e) =>
                                                         setRows((prev) =>
-                                                            prev.map((r, i) =>
-                                                                i === index ? { ...r, email: e.target.value } : r,
+                                                            prev.map((draft, i) =>
+                                                                i === index ? { ...draft, email: e.target.value } : draft,
                                                             ),
                                                         )
                                                     }
@@ -309,21 +309,21 @@ export function ProfessionalsBulk() {
                         </Typography>
 
                         <Stack gap={1}>
-                            {(result.results ?? []).map((r) => (
-                                <Card key={r.index} variant="outlined">
+                            {(result.results ?? []).map((bulkResultItem) => (
+                                <Card key={bulkResultItem.index} variant="outlined">
                                     <CardContent>
                                         <Stack direction="row" justifyContent="space-between" alignItems="center">
-                                            <Typography variant="subtitle2">Index: {r.index}</Typography>
-                                            {statusChip(String(r.status))}
+                                            <Typography variant="subtitle2">Index: {bulkResultItem.index}</Typography>
+                                            {statusChip(String(bulkResultItem.status))}
                                         </Stack>
 
-                                        {r.error ? (
+                                        {bulkResultItem.error ? (
                                             <Typography
                                                 variant="body2"
                                                 color="error"
                                                 sx={{ whiteSpace: "pre-wrap", mt: 1 }}
                                             >
-                                                {r.error}
+                                                {bulkResultItem.error}
                                             </Typography>
                                         ) : (
                                             <Typography variant="body2" color="text.secondary" sx={{ mt: 1 }}>

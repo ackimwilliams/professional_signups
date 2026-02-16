@@ -101,44 +101,44 @@ export function ProfessionalsList() {
 
             {!isLoading && !isError && (
                 <Stack gap={2}>
-                    {list.map((p) => (
-                        <Card key={p.id}>
+                    {list.map((professional) => (
+                        <Card key={professional.id}>
                             <CardContent>
                                 <Stack direction="row" justifyContent="space-between" alignItems="flex-start" gap={2}>
                                     <Box>
-                                        <Typography variant="h6">{p.full_name}</Typography>
+                                        <Typography variant="h6">{professional.full_name}</Typography>
                                         <Stack direction="row" gap={1} alignItems="center" flexWrap="wrap" mt={0.5}>
-                                            <Chip size="small" label={p.source} />
-                                            {p.email ? <Typography variant="body2">{p.email}</Typography> : null}
-                                            {p.phone ? <Typography variant="body2">{p.phone}</Typography> : null}
-                                            {p.company_name ? <Typography variant="body2">{p.company_name}</Typography> : null}
-                                            {p.job_title ? <Typography variant="body2">{p.job_title}</Typography> : null}
+                                            <Chip size="small" label={professional.source} />
+                                            {professional.email ? <Typography variant="body2">{professional.email}</Typography> : null}
+                                            {professional.phone ? <Typography variant="body2">{professional.phone}</Typography> : null}
+                                            {professional.company_name ? <Typography variant="body2">{professional.company_name}</Typography> : null}
+                                            {professional.job_title ? <Typography variant="body2">{professional.job_title}</Typography> : null}
                                         </Stack>
 
-                                        {p.resume_summary ? (
+                                        {professional.resume_summary ? (
                                             <Typography variant="body2" color="text.secondary" mt={1} sx={{ whiteSpace: "pre-wrap" }}>
-                                                {p.resume_summary.length > 240
-                                                    ? `${p.resume_summary.slice(0, 240).trim()}…`
-                                                    : p.resume_summary}
+                                                {professional.resume_summary.length > 240
+                                                    ? `${professional.resume_summary.slice(0, 240).trim()}…`
+                                                    : professional.resume_summary}
                                             </Typography>
                                         ) : null}
                                     </Box>
 
                                     <Stack direction="row" gap={1}>
-                                        {p.resume_url ? (
+                                        {professional.resume_url ? (
                                             <Button
                                                 variant="outlined"
                                                 onClick={() =>
                                                     setResumeViewer({
-                                                        name: p.full_name,
-                                                        url: p.resume_url ?? "",
+                                                        name: professional.full_name,
+                                                        url: professional.resume_url ?? "",
                                                     })
                                                 }
                                             >
                                                 View Resume
                                             </Button>
                                         ) : null}
-                                        <Button variant="outlined" onClick={() => setResumeTarget(p)}>
+                                        <Button variant="outlined" onClick={() => setResumeTarget(professional)}>
                                             Upload Resume (PDF)
                                         </Button>
                                     </Stack>
