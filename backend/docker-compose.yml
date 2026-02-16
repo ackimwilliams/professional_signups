@@ -1,0 +1,70 @@
+#version: "3.9"
+
+services:
+  # -------------------------- cloud storage on local
+  minio:
+    image: minio/minio:latest
+    container_name: minio
+    command: server /data --console-address ":9001"
+    environment:
+      MINIO_ROOT_USER: minioadmin
+      MINIO_ROOT_PASSWORD: minioadmin
+    ports:
+      - "9000:9000"   # S3 API
+      - "9001:9001"   # Web Console
+    volumes:
+      - miniodata:/data
+
+  minio-init:
+    image: minio/mc:latest
+    container_name: minio-init
+    depends_on:
+      - minio
+    entrypoint: >
+      /bin/sh -c "
+      echo 'Waiting for MinIO to be ready...';
+      until mc alias set local http://minio:9000 minioadmin minioadmin; do
+        sleep 1;
+      done;
+      echo 'Creating bucket if not exist...';
+      mc mb -p local/resumes || true;
+      echo 'Setting anonymous download policy...';
+      mc anonymous set download local/resumes;
+      echo 'Current buckets:';
+      mc ls local;
+      echo 'Cloud storage initialization complete.';
+      "
+
+  # -------------------------- Django app
+  web:
+    build: .
+    container_name: web
+    depends_on:
+      - minio
+      - minio-init
+    environment:
+      DJANGO_SECRET_KEY: dev-secret-key
+      DJANGO_DEBUG: "1"
+      DJANGO_ALLOWED_HOSTS: "localhost,127.0.0.1"
+      DJANGO_LOG_LEVEL: "INFO"
+
+      # @todo: these should be env variables or use secret manager
+      USE_S3: "1"
+      S3_ENDPOINT: http://minio:9000
+      S3_BUCKET: resumes
+      S3_ACCESS_KEY: minioadmin
+      S3_SECRET_KEY: minioadmin
+      S3_REGION: us-east-1
+    ports:
+      - "8000:8000"
+    volumes:
+      - ./db.sqlite3:/app/db.sqlite3
+    command: >
+      /bin/sh -c "
+      python manage.py migrate &&
+      python manage.py seed &&
+      gunicorn config.wsgi:application --bind 0.0.0.0:8000
+      "
+
+volumes:
+  miniodata:

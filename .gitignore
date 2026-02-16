@@ -1,0 +1,43 @@
+# os
+.DS_Store
+
+
+# ide
+.idea/
+
+# python
+*.pyc
+__pycache__/
+.python-version
+.venv/
+venv/
+env/
+pip-wheel-metadata/
+*.egg-info/
+
+# django
+*.sqlite3
+media/
+staticfiles/
+
+# logs
+*.log
+
+# env files
+*.env
+.env.*
+.envrc
+
+# build
+build/
+dist/
+
+# frontend
+node_modules/
+.vite/
+.env
+
+# cache
+coverage/
+.pytest_cache/
+.mypy_cache/
